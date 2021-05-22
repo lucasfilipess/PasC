@@ -35,8 +35,6 @@ class Lexer():
 
    def proxToken(self):
       # Implementa um AFD.
-      isNumConst =  False
-      isCharConst = ""
       estado = 1
       lexema = ""
       c = '\u0000'
@@ -44,11 +42,16 @@ class Lexer():
       while(True):
          self.lookahead = self.input_file.read(1)
          c = self.lookahead.decode('ascii')
-
          if(estado == 1):
             if(c == ''):
                return Token(Tag.EOF, "EOF", self.n_line, self.n_column)
-            elif(c == ' ' or c == '\t' or c == '\n' or c == '\r'):
+            elif(c == ' ' or c == '\r'):
+               estado = 1
+            elif(c == '\t'):
+               self.n_column += 3
+            elif(c == '\n'):
+               self.n_line += 1
+               self.n_column +=1
                estado = 1
             elif(c == '='):
                estado = 2
@@ -81,15 +84,13 @@ class Lexer():
             elif(c == ';'):
                estado = 30
             elif(c == '"'):
-               estado = 14
+               estado = 31
             elif(c.isdigit()):
                lexema += c
                estado = 12
             elif(c.isalpha()):
                lexema += c
                estado = 14
-            elif(c == '/'):
-               estado = 16
             else:
                self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
                str(self.n_line) + " e coluna " + str(self.n_column))
@@ -122,9 +123,34 @@ class Lexer():
 
             self.retornaPonteiro()
             return Token(Tag.OP_GT, ">", self.n_line, self.n_column)
+         
+         elif(estado == 35):
+            if(c == '/'):
+               estado = 1
+            else:
+               estado = 34
+         
+         elif(estado == 34):
+            if(c == '*'):
+               estado = 35
+            if(c == ''):
+               self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+               str(self.n_line) + " e coluna " + str(self.n_column))
+               return None
+
+         elif(estado == 17):
+            if(c == '\n'):
+               estado = 1
 
          elif(estado == 16):
-            return Token(Tag.OP_DIV, "/", self.n_line, self.n_column)
+            if(c == '/'):
+               estado = 17
+            elif(c == '\n'):
+               estado = 1
+            elif(c == '*'):
+               estado = 34
+            else:
+               return Token(Tag.OP_DIV, "/", self.n_line, self.n_column)
 
          elif(estado == 21):
             return Token(Tag.OP_MUL, "*", self.n_line, self.n_column)
@@ -153,22 +179,54 @@ class Lexer():
          elif(estado == 30):
             return Token(Tag.SMB_SEM, ";", self.n_line, self.n_column)
          
-         elif(estado == 31):
-            isCharConst = True
+         elif(estado == 32):
+               if(c=='\n'):
+                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  str(self.n_line) + " e coluna " + str(self.n_column))
+                  return None
+               elif (c == '"'):
+                  # estado = 1
+                  return Token(Tag.CHAR_CONST, lexema, self.n_line, self.n_column)
+               elif(c.isascii()):
+                  lexema += c
+               else:
+                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  str(self.n_line) + " e coluna " + str(self.n_column))
+                  return None
 
+         elif(estado == 31):
+               if(c=='\n'):
+                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  str(self.n_line) + " e coluna " + str(self.n_column))
+                  return None
+               elif(c.isascii()):
+                  estado = 32
+                  lexema += c
+               else:
+                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  str(self.n_line) + " e coluna " + str(self.n_column))
+                  return None
+            
+         elif(estado == 19):
+            if(c.isdigit()):
+               lexema += c  
+            elif(c == '\n'):
+               self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+               str(self.n_line) + " e coluna " + str(self.n_column))
+               return None
+            else:
+               self.retornaPonteiro()
+               return Token(Tag.NUM_CONST, lexema, self.n_line, self.n_column)
+         
          elif(estado == 12):
             if(c.isdigit()):
                lexema += c 
             elif(c == '.'):
-              isNumConst = True
-              lexema += c 
+               estado = 19    
+               lexema += c 
             else:
                self.retornaPonteiro()
-               if(isNumConst):
-                  isNumConst = False
-                  return Token(Tag.NUM_CONST, lexema, self.n_line, self.n_column)
-               else:
-                  return Token(Tag.DIGIT, lexema, self.n_line, self.n_column)
+               return Token(Tag.NUM_CONST, lexema, self.n_line, self.n_column)
 
          elif(estado == 14):
             if(c.isalnum()):

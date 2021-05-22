@@ -1,6 +1,5 @@
 from tag import Tag
 from token import Token
-
 class TS:
    '''
    Classe para a tabela de simbolos representada por um dicionario: {'chave' : 'valor'}

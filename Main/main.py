@@ -1,9 +1,9 @@
 from tag import Tag
-from token import Token
+# from token import Token
 from lexer import Lexer
 
 if __name__ == "__main__":
-   lexer = Lexer('program.txt')
+   lexer = Lexer('pascHelloWorld.psc')
 
    print("\n=>Lista de tokens:")
    token = lexer.proxToken()
