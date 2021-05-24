@@ -1,23 +1,17 @@
-cont = "erro;
-/*
 program HelloWorld
    num dataEntrega;
    num cont;
    char msgm;
    num cont;
-*/  
-// char comment = 10
+//   num i;
+
+{
+   dataEntrega = 16 / 05 / 21;
+   msgm = "Bom trabalho!";
+   cont = 10.00;
+   write msgm;
+}
+
 /*
-   {
-      dataEntrega = 16 / 05 / 21;
-      msgm = "Bom trabalho! **";
-      cont = 10.00;
-      write msgm;
-   }
-*/
-
-/* 
-** /wdywvd/
-fiueue **** wfbubf ////f fhuf
-
+Teste de comentario de multilinha.
 */

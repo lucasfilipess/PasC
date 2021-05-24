@@ -19,7 +19,7 @@ cadastrados como ID. Somente palavras reservadas e identificadores serão cadast
 Não é permitido o cadastro de um mesmo token mais de uma vez na TS.
 Seu Analisador Léxico deverá imprimir a lista de todos os tokens reconhecidos, assim como
 imprimir o que está cadastrado na Tabela de Símbolos, de qualquer programa escrito em PasC.
-Na impressão dos tokens, deverá aparecer a tupla <nome_do_token, lexema> assim como a linha e
+Na impressão dos tokens, deverá aparecer a tupla <nome*do_token, lexema> assim como a linha e
 a coluna de cada token.
 Além de reconhecer os tokens da linguagem, seu analisador léxico deverá detectar possíveis erros e
 reportá-los ao usuário. O programa deverá informar o erro e o local onde ocorreu (linha e coluna).
@@ -103,16 +103,16 @@ mulop
 constant → “or” | “and”
 → “==” | “>” | “>=” | “<” | “<=” | “!=”
 → “+” | “-”
-→ “_” | “/”
-→ “num_const” | “char_const”
+→ “*” | “/”
+→ “num*const” | “char_const”
 Padrões para números, caracteres, strings e identificadores do PasC
 digit = [0-9]
 letter
 id
 char_const = [A-Z | a-z]
-= letter (letter | digit) _
+= letter (letter | digit) *
 = pelo menos um dos 256 caracteres do conjunto ASCII entre aspas duplas
-num_const = digit + (“.” digit + )?Nomes para os tokens:
+num*const = digit + (“.” digit + )?Nomes para os tokens:
 Operadores:
 OP_EQ: ==
 OP_NE: !=
@@ -127,8 +127,8 @@ OP_GE: >=
 OP_LE: <=
 OP_AD: +
 OP_MIN: -
-OP_MUL: _
-OP_DIV: /
+OP_MUL: *
+OP*DIV: /
 OP_ATRIB: =
 SMB_COM: ,
 SMB_SEM: ;
@@ -151,7 +151,7 @@ Outras características de PasC
 As palavras-chave de PasC são reservadas;
 Toda variável deve ser declarada antes do seu uso (Análise Semântica);
 As aspas não são tokens;
-A linguagem possui comentários de mais de uma linha. Um comentário começa com “/_” e
+A linguagem possui comentários de mais de uma linha. Um comentário começa com “/*” e
 deve terminar com “\*/”;
 A linguagem possui comentários de uma linha. Um comentário começa com “//”;
 A semântica das expressões é a tradicional do C;

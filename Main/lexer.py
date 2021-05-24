@@ -42,26 +42,21 @@ class Lexer():
       while(True):
          self.lookahead = self.input_file.read(1)
          c = self.lookahead.decode('ascii')
+
          if(c == '\t'):
             self.n_column += 3
-         elif(c == '\n'):
-            self.n_line += 1
-            self.n_column += 1
-            # estado = 1
          else:
             self.n_column +=1
-
+         if(c == '\n'):
+            self.n_line += 1
+            self.n_column = 1
 
          if(estado == 1):
             if(c == ''):
                return Token(Tag.EOF, "EOF", self.n_line, self.n_column)
             elif(c == ' ' or c == '\r'):
                estado = 1
-            elif(c == '\t'):
-               self.n_column += 3
             elif(c == '\n'):
-               self.n_line += 1
-               self.n_column +=1
                estado = 1
             elif(c == '='):
                estado = 2
@@ -77,7 +72,7 @@ class Lexer():
                estado = 12
             elif(c == '*'):
                estado = 21
-            elif(c == '-'):   
+            elif(c == '-'):
                estado = 22
             elif(c == '+'):
                estado = 23
@@ -102,33 +97,30 @@ class Lexer():
                lexema += c
                estado = 14
             else:
-               self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+               self.sinalizaErroLexico("Tabela ASCII não possui o caracter [" + c + "], linha " +
                str(self.n_line) + " e coluna " + str(self.n_column))
                return None
          elif(estado == 2):
             if(c == '='):
                return Token(Tag.OP_EQ, "==", self.n_line, self.n_column)
             else:
-               self.retornaPonteiro()
                return Token(Tag.OP_ATRIB, "=", self.n_line, self.n_column)
          elif(estado == 4):
             if(c == '='):
                return Token(Tag.OP_NE, "!=", self.n_line, self.n_column)
 
-            self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+            self.sinalizaErroLexico("Após ! insira = ou um espaço!!a linha " +
             str(self.n_line) + " e coluna " + str(self.n_column))
             return None
          elif(estado == 6):
             if(c == '='):
                return Token(Tag.OP_LE, "<=", self.n_line, self.n_column)
 
-            self.retornaPonteiro()
             return Token(Tag.OP_LT, "<", self.n_line, self.n_column)
          elif(estado == 9):
             if(c == '='):
                return Token(Tag.OP_GE, ">=", self.n_line, self.n_column)
 
-            self.retornaPonteiro()
             return Token(Tag.OP_GT, ">", self.n_line, self.n_column)
          
          elif(estado == 35):
@@ -141,12 +133,11 @@ class Lexer():
             if(c == '*'):
                estado = 35
             if(c == ''):
-               self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+               self.sinalizaErroLexico("É necessario fechar o comentario! linha " +
                str(self.n_line) + " e coluna " + str(self.n_column))
                return None
 
          elif(estado == 17):
-            # self.n_column +=1
             if(c == '\n'):
                estado = 1
 
@@ -189,7 +180,7 @@ class Lexer():
          
          elif(estado == 32):
                if(c=='\n'):
-                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  self.sinalizaErroLexico("Verifique as aspas! Na linha " +
                   str(self.n_line) + " e coluna " + str(self.n_column))
                   return None
                elif (c == '"'):
@@ -203,7 +194,7 @@ class Lexer():
 
          elif(estado == 31):
                if(c=='\n'):
-                  self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
+                  self.sinalizaErroLexico("oce possui aspas sem fechamento! Na linha " +
                   str(self.n_line) + " e coluna " + str(self.n_column))
                   return None
                elif(c.isascii()):
@@ -222,7 +213,6 @@ class Lexer():
                str(self.n_line) + " e coluna " + str(self.n_column))
                return None
             else:
-               self.retornaPonteiro()
                return Token(Tag.NUM_CONST, lexema, self.n_line, self.n_column)
          
          elif(estado == 12):
@@ -232,26 +222,30 @@ class Lexer():
                estado = 19    
                lexema += c 
             else:
-               self.retornaPonteiro()
                return Token(Tag.NUM_CONST, lexema, self.n_line, self.n_column)
 
          elif(estado == 14):
             if(c.isalnum()):
                lexema += c
             else:
+
+               self.n_column -= 1
                self.retornaPonteiro()
+
                estado = 1
-               self.n_column -= self.n_column
                token = self.ts.getToken(lexema)
                if(token is None):
                   token = Token(Tag.ID, lexema, self.n_line, self.n_column)
                   self.ts.addToken(lexema, token)
-
+                  return token
+               
                token.setLinha(self.n_line)
                token.setColuna(self.n_column)
                lexema = ""
-
                return token
-         
+              
+               
+
+
          # fim if's de estados
       # fim while

@@ -6,7 +6,7 @@ class Token:
       self.nome = nome
       self.lexema = lexema
       self.linha = linha
-      self.coluna = coluna;
+      self.coluna = coluna
 
    def getNome(self):
       return self.nome
@@ -27,4 +27,4 @@ class Token:
       self.coluna = coluna
 
    def toString(self):
-      return "<" + str(self.nome.name) + ", \"" + str(self.lexema) + "\">";
+      return "<" + str(self.nome.name) + ", \"" + str(self.lexema) + "\">"
