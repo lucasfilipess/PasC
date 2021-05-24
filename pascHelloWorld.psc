@@ -1,8 +1,11 @@
+cont = "erro;
+/*
 program HelloWorld
    num dataEntrega;
    num cont;
    char msgm;
-   
+   num cont;
+*/  
 // char comment = 10
 /*
    {
@@ -18,5 +21,3 @@ program HelloWorld
 fiueue **** wfbubf ////f fhuf
 
 */
-
-   cont = 0;

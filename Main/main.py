@@ -1,5 +1,4 @@
 from tag import Tag
-# from token import Token
 from lexer import Lexer
 
 if __name__ == "__main__":

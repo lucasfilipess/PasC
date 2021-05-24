@@ -42,6 +42,16 @@ class Lexer():
       while(True):
          self.lookahead = self.input_file.read(1)
          c = self.lookahead.decode('ascii')
+         if(c == '\t'):
+            self.n_column += 3
+         elif(c == '\n'):
+            self.n_line += 1
+            self.n_column += 1
+            # estado = 1
+         else:
+            self.n_column +=1
+
+
          if(estado == 1):
             if(c == ''):
                return Token(Tag.EOF, "EOF", self.n_line, self.n_column)
@@ -67,7 +77,7 @@ class Lexer():
                estado = 12
             elif(c == '*'):
                estado = 21
-            elif(c == '-'):
+            elif(c == '-'):   
                estado = 22
             elif(c == '+'):
                estado = 23
@@ -98,12 +108,9 @@ class Lexer():
          elif(estado == 2):
             if(c == '='):
                return Token(Tag.OP_EQ, "==", self.n_line, self.n_column)
-            elif(c == ' '):
+            else:
+               self.retornaPonteiro()
                return Token(Tag.OP_ATRIB, "=", self.n_line, self.n_column)
-            else:   
-               self.sinalizaErroLexico("Caractere invalido [" + c + "] na linha " +
-               str(self.n_line) + " e coluna " + str(self.n_column))
-            return None
          elif(estado == 4):
             if(c == '='):
                return Token(Tag.OP_NE, "!=", self.n_line, self.n_column)
@@ -139,6 +146,7 @@ class Lexer():
                return None
 
          elif(estado == 17):
+            # self.n_column +=1
             if(c == '\n'):
                estado = 1
 
@@ -185,7 +193,6 @@ class Lexer():
                   str(self.n_line) + " e coluna " + str(self.n_column))
                   return None
                elif (c == '"'):
-                  # estado = 1
                   return Token(Tag.CHAR_CONST, lexema, self.n_line, self.n_column)
                elif(c.isascii()):
                   lexema += c
@@ -233,12 +240,18 @@ class Lexer():
                lexema += c
             else:
                self.retornaPonteiro()
+               estado = 1
+               self.n_column -= self.n_column
                token = self.ts.getToken(lexema)
                if(token is None):
                   token = Token(Tag.ID, lexema, self.n_line, self.n_column)
                   self.ts.addToken(lexema, token)
 
-               return token
+               token.setLinha(self.n_line)
+               token.setColuna(self.n_column)
+               lexema = ""
 
+               return token
+         
          # fim if's de estados
       # fim while
